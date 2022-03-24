@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button btnNotify;
@@ -97,15 +99,18 @@ public class MainActivity extends AppCompatActivity {
             editor.putInt("minute", minute);
             editor.apply();
 
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+
             Intent notificationIntent = new Intent(MainActivity.this, NotificationPublisher.class);
             notificationIntent.putExtra(NotificationPublisher.KEY_NOTIFICATION_ID, 1);
             notificationIntent.putExtra(NotificationPublisher.KEY_NOTIFICATION, "Hora de beber água");
 
-            PendingIntent broadcast = PendingIntent.getBroadcast(MainActivity.this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent broadcast = PendingIntent.getBroadcast(MainActivity.this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-            long futureInMillis = SystemClock.elapsedRealtime() + (interval * 1000);
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, broadcast);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), interval * 60 * 1000L, broadcast);
 
             activated = true;
         }   else {
@@ -121,6 +126,15 @@ public class MainActivity extends AppCompatActivity {
             editor.remove("hour");
             editor.remove("minute");
             editor.apply();
+
+            Intent notificationIntent = new Intent(MainActivity.this, NotificationPublisher.class);
+            PendingIntent broadcast = PendingIntent.getBroadcast(MainActivity.this, 0, notificationIntent, 0);
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            alarmManager.cancel(broadcast);
+
+
+
 
             activated = false;
             }
