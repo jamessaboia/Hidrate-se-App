@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private int hour;
     private int minute;
     private int interval;
-    private String sInterval;
 
     private boolean activated = false;
 
@@ -72,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void notifyClick(View view) {
 
+        String sInterval;
+
         sInterval = editMinutes.getText().toString();
 
         // validador de formulário
@@ -87,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!activated) {
             btnNotify.setText(R.string.pause);
-            int color = ContextCompat.getColor(this, android.R.color.black);
-            btnNotify.setBackgroundColor(color);
+            btnNotify.setBackgroundResource(R.drawable.bg_button_background);
 
             // usando a classe "SharedPreferences" p/ salvar e armazenar os dados...
             // abaixo. O "edtior" permite que seja escrito qualquer coisa no banco de dados
@@ -116,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
         }   else {
             // quando o usuario clicar em pausar o texto e a cor irão se manter/retornar no padrão de antes
                 btnNotify.setText(R.string.notify);
-                int color = ContextCompat.getColor(this, R.color.colorAccent);
-                btnNotify.setBackgroundColor(color);
+                btnNotify.setBackgroundResource(R.drawable.bg_button_background_accent);
 
             // fazendo a logica inversa, pois vamos apagar o banco de dados...
             SharedPreferences.Editor editor =  storage.edit();
@@ -133,13 +132,8 @@ public class MainActivity extends AppCompatActivity {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.cancel(broadcast);
 
-
-
-
             activated = false;
             }
-
-        Log.d("Teste", "hora: " + hour + ";" + " minuto: " + minute + ";" + " intervalo: " + interval);
 
     }
 
